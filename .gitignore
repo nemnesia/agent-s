@@ -1,2 +1,4 @@
 .python-version
-work
+.coverage
+__pycache__/
+work/
