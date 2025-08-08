@@ -23,6 +23,7 @@ from utils.symbol_utils import (
     create_aggregate_transaction,
     create_remote_key_link_transaction,
     create_vrf_key_link_transaction,
+    create_node_key_link_transaction,
 )
 
 # ログ設定
@@ -88,7 +89,6 @@ def get_public_account_from_pem(
 
 
 def _process_key_link(
-    account_link_keys: dict,
     key_type: str,
     current_key_hex: Optional[str],
     target_public_key: PublicKey,
@@ -218,7 +218,6 @@ def link_node_keys(args):
 
         # リモートキーの処理
         remote_txs = _process_key_link(
-            account_link_keys,
             "リモート",
             account_link_keys.get("linked"),  # 注意: "remote"ではなく"linked"
             remote_public_account.public_key,
@@ -230,7 +229,6 @@ def link_node_keys(args):
 
         # VRFキーの処理
         vrf_txs = _process_key_link(
-            account_link_keys,
             "VRF",
             account_link_keys.get("vrf"),
             vrf_public_account.public_key,
@@ -241,10 +239,16 @@ def link_node_keys(args):
         txs.extend(vrf_txs)
 
         # ノードキー（ノードのアカウントはリンクしない）
-        if account_link_keys.get("node") is None:
-            logger.info("ノードキーはリンクされていないので何もしません。")
-        else:
-            logger.info("ノードキーはリンクされているのでアンリンクします。")
+        if account_link_keys.get("node") is not None:
+            node_tx = _process_key_link(
+                "ノード",
+                account_link_keys.get("node"),
+                main_public_account.public_key,
+                facade,
+                main_public_account.public_key,
+                create_node_key_link_transaction,
+            )
+            txs.extend(node_tx)
 
         # アグリゲートトランザクションを生成
         if not txs:

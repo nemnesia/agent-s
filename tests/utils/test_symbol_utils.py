@@ -154,6 +154,70 @@ class TestCreateRemoteKeyLinkTransaction:
 class TestCreateVrfKeyLinkTransaction:
     """create_vrf_key_link_transactionのテストクラス"""
 
+
+class TestCreateNodeKeyLinkTransaction:
+    """create_node_key_link_transactionのテストクラス"""
+
+    def test_create_node_key_link_transaction_success_default(self):
+        mock_facade = Mock(spec=SymbolFacade)
+        mock_main_key = Mock(spec=PublicKey)
+        mock_node_key = Mock(spec=PublicKey)
+        mock_result = Mock()
+
+        with patch(
+            "src.utils.symbol_utils._create_key_link_transaction",
+            return_value=mock_result,
+        ) as mock_create:
+            result = symbol_utils.create_node_key_link_transaction(
+                mock_facade, mock_main_key, mock_node_key
+            )
+
+            assert result == mock_result
+            mock_create.assert_called_once_with(
+                mock_facade,
+                symbol_utils.NODE_KEY_LINK_TRANSACTION_TYPE,
+                mock_main_key,
+                mock_node_key,
+                True,  # デフォルト値
+            )
+
+    def test_create_node_key_link_transaction_success_unlink(self):
+        mock_facade = Mock(spec=SymbolFacade)
+        mock_main_key = Mock(spec=PublicKey)
+        mock_node_key = Mock(spec=PublicKey)
+        mock_result = Mock()
+
+        with patch(
+            "src.utils.symbol_utils._create_key_link_transaction",
+            return_value=mock_result,
+        ) as mock_create:
+            result = symbol_utils.create_node_key_link_transaction(
+                mock_facade, mock_main_key, mock_node_key, False
+            )
+
+            assert result == mock_result
+            mock_create.assert_called_once_with(
+                mock_facade,
+                symbol_utils.NODE_KEY_LINK_TRANSACTION_TYPE,
+                mock_main_key,
+                mock_node_key,
+                False,
+            )
+
+    def test_create_node_key_link_transaction_failure(self):
+        mock_facade = Mock(spec=SymbolFacade)
+        mock_main_key = Mock(spec=PublicKey)
+        mock_node_key = Mock(spec=PublicKey)
+
+        with patch(
+            "src.utils.symbol_utils._create_key_link_transaction",
+            side_effect=Exception("Failed"),
+        ) as mock_create:
+            with pytest.raises(Exception, match="Failed"):
+                symbol_utils.create_node_key_link_transaction(
+                    mock_facade, mock_main_key, mock_node_key
+                )
+
     def test_create_vrf_key_link_transaction_success_default(self):
         mock_facade = Mock(spec=SymbolFacade)
         mock_main_key = Mock(spec=PublicKey)

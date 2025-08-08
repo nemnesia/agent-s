@@ -116,12 +116,10 @@ class TestProcessKeyLink:
 
     def test_no_current_key_link_needed(self):
         """現在キーがない場合（リンクが必要）"""
-        account_link_keys = {"linked": None, "node": None, "vrf": None}
-
+        current_key_hex = None
         txs = link._process_key_link(
-            account_link_keys,
             "remote",
-            account_link_keys.get("linked"),
+            current_key_hex,
             self.mock_target_public_key,
             self.mock_facade,
             self.mock_main_public_key,
@@ -139,10 +137,7 @@ class TestProcessKeyLink:
     def test_current_key_same_as_target(self):
         """現在のキーが目標キーと同じ場合（何もしない）"""
         current_key_hex = str(self.mock_target_public_key)
-        account_link_keys = {"linked": current_key_hex, "node": None, "vrf": None}
-
         txs = link._process_key_link(
-            account_link_keys,
             "remote",
             current_key_hex,
             self.mock_target_public_key,
@@ -157,10 +152,7 @@ class TestProcessKeyLink:
     def test_current_key_different_from_target(self):
         """現在のキーが目標キーと異なる場合（アンリンク→リンク）"""
         different_key_hex = "ABCDEF1234567890" * 4
-        account_link_keys = {"linked": different_key_hex, "node": None, "vrf": None}
-
         txs = link._process_key_link(
-            account_link_keys,
             "remote",
             different_key_hex,
             self.mock_target_public_key,
@@ -170,20 +162,20 @@ class TestProcessKeyLink:
         )
 
         assert len(txs) == 2
-        # アンリンク呼び出し
-        self.mock_create_tx_func.assert_any_call(
-            self.mock_facade,
-            self.mock_main_public_key,
-            PublicKey(different_key_hex),
-            False,
-        )
-        # リンク呼び出し
-        self.mock_create_tx_func.assert_any_call(
-            self.mock_facade,
-            self.mock_main_public_key,
-            self.mock_target_public_key,
-            True,
-        )
+        # 呼び出し履歴をstrで比較
+        calls = self.mock_create_tx_func.call_args_list
+        unlink_call = calls[0][0]
+        link_call = calls[1][0]
+        # アンリンク
+        assert unlink_call[0] == self.mock_facade
+        assert unlink_call[1] == self.mock_main_public_key
+        assert str(unlink_call[2]) == different_key_hex
+        assert unlink_call[3] is False
+        # リンク
+        assert link_call[0] == self.mock_facade
+        assert link_call[1] == self.mock_main_public_key
+        assert str(link_call[2]) == str(self.mock_target_public_key)
+        assert link_call[3] is True
 
 
 class TestValidateNetworkName:

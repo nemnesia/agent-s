@@ -22,6 +22,7 @@ MIN_COSIGNATURES_FOR_BONDED = 2
 # トランザクションタイプ定数
 ACCOUNT_KEY_LINK_TRANSACTION_TYPE = "account_key_link_transaction_v1"
 VRF_KEY_LINK_TRANSACTION_TYPE = "vrf_key_link_transaction_v1"
+NODE_KEY_LINK_TRANSACTION_TYPE = "node_key_link_transaction_v1"
 AGGREGATE_COMPLETE_TRANSACTION_TYPE = "aggregate_complete_transaction_v2"
 AGGREGATE_BONDED_TRANSACTION_TYPE = "aggregate_bonded_transaction_v2"
 
@@ -128,6 +129,35 @@ def create_vrf_key_link_transaction(
         VRF_KEY_LINK_TRANSACTION_TYPE,
         main_public_key,
         vrf_public_key,
+        is_link,
+    )
+
+
+def create_node_key_link_transaction(
+    facade: SymbolFacade,
+    main_public_key: PublicKey,
+    node_public_key: PublicKey,
+    is_link: bool = True,
+):
+    """ノードキーリンクトランザクションを生成する
+
+    Args:
+        facade: SymbolFacadeインスタンス
+        main_public_key: メインアカウントの公開鍵
+        node_public_key: ノード公開鍵
+        is_link: リンクする場合True、アンリンクする場合False（デフォルト: True）
+
+    Returns:
+        ノードキーリンクのembeddedトランザクション
+
+    Raises:
+        Exception: トランザクション生成に失敗した場合
+    """
+    return _create_key_link_transaction(
+        facade,
+        NODE_KEY_LINK_TRANSACTION_TYPE,
+        main_public_key,
+        node_public_key,
         is_link,
     )
 
