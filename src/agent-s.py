@@ -8,6 +8,8 @@ import logging
 import sys
 from typing import NoReturn
 
+from commands.backup import setup_backup_subparser
+from commands.restore import setup_restore_subparser
 from commands.show_key import setup_show_key_subparser
 from commands.link import setup_link_subparser
 
@@ -50,6 +52,12 @@ def main() -> NoReturn:
 
         # サブコマンド: link
         setup_link_subparser(subparsers)
+
+        # サブコマンド: backup
+        setup_backup_subparser(subparsers)
+
+        # サブコマンド: restore
+        setup_restore_subparser(subparsers)
 
         # 引数解析
         args = parser.parse_args()
