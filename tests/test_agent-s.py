@@ -18,14 +18,14 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "..", "src"))
 # agent-s.pyのインポート（直接的な方法）
 import importlib.util
 
-agent_s_path = os.path.join(os.path.dirname(__file__), "..", "src", "agent-s.py")
+agent_s_path = os.path.join(os.path.dirname(__file__), "..", "src", "agent_s.py")
 spec = importlib.util.spec_from_file_location("agent_s", agent_s_path)
 if spec is not None and spec.loader is not None:
     agent_s = importlib.util.module_from_spec(spec)
     sys.modules["agent_s"] = agent_s
     spec.loader.exec_module(agent_s)
 else:
-    raise ImportError("Could not import agent-s.py")
+    raise ImportError("Could not import agent_s.py")
 
 
 class TestSetupLogging:

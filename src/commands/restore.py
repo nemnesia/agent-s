@@ -127,7 +127,7 @@ def _confirm_overwrite(existing_files: list) -> bool:
     Returns:
         bool: 上書きする場合True、しない場合False
     """
-    print(f"\n以下のファイルが既に存在します:")
+    print("\n以下のファイルが既に存在します:")
     for file in existing_files:
         print(f"  {file}")
 

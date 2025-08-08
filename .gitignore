@@ -2,3 +2,4 @@
 .coverage
 __pycache__/
 work/
+agent-s.pyz

@@ -1,29 +1,29 @@
 import argparse
 import logging
-from typing import Optional, List, Literal
+from typing import List, Literal, Optional
 
 from symbolchain.CryptoTypes import PublicKey
 from symbolchain.facade.SymbolFacade import SymbolFacade, SymbolPublicAccount
 
 from utils.rest_gateway_utils import (
+    RestGatewayError,
+    get_account_link_keys,
     get_min_approval,
     get_rest_gateway_url,
-    get_account_link_keys,
-    RestGatewayError,
 )
 from utils.shoestring_utils import (
     NODE_FULL_CERT_PEM_PATH,
     REMOTE_KEY_PEM_PATH,
     VRF_KEY_PEM_PATH,
-    get_network_name,
     get_key_pair,
+    get_network_name,
     get_public_keys_from_pem_chain,
 )
 from utils.symbol_utils import (
     create_aggregate_transaction,
+    create_node_key_link_transaction,
     create_remote_key_link_transaction,
     create_vrf_key_link_transaction,
-    create_node_key_link_transaction,
 )
 
 # ログ設定
@@ -52,9 +52,7 @@ def get_public_account_from_pem_chain(
             logger.error(f"チェーン証明書の取得に失敗しました: {pem_path}")
             return None
 
-        main_public_account = facade.create_public_account(
-            PublicKey(main_public_keys_hex["main"])
-        )
+        main_public_account = facade.create_public_account(PublicKey(main_public_keys_hex["main"]))
         return main_public_account
 
     except Exception as e:
@@ -252,15 +250,11 @@ def link_node_keys(args):
 
         # アグリゲートトランザクションを生成
         if not txs:
-            logger.info(
-                "リンクするキーがないため、アグリゲートトランザクションは生成されません。"
-            )
+            logger.info("リンクするキーがないため、アグリゲートトランザクションは生成されません。")
             return
 
         try:
-            min_cosignatures_count = get_min_approval(
-                rest_gateway_url, main_public_account.address
-            )
+            min_cosignatures_count = get_min_approval(rest_gateway_url, main_public_account.address)
             logger.info(f"マルチシグ最小承認数: {min_cosignatures_count}")
         except RestGatewayError as e:
             logger.warning(f"最小承認数の取得に失敗、デフォルト値1を使用: {e}")

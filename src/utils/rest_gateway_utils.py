@@ -2,11 +2,12 @@
 REST Gateway utility functions for Symbol blockchain
 """
 
-import requests
-import random
 import logging
-from typing import Dict, Optional, List, Any, Literal
+import random
 from dataclasses import dataclass
+from typing import Any, Dict, Literal, Optional
+
+import requests
 
 # ログ設定
 logger = logging.getLogger(__name__)
@@ -35,9 +36,7 @@ class RestGatewayError(Exception):
     pass
 
 
-def get_account_link_keys(
-    rest_gateway_url: str, address: str
-) -> Dict[str, Optional[str]]:
+def get_account_link_keys(rest_gateway_url: str, address: str) -> Dict[str, Optional[str]]:
     """指定したアドレスのアカウントリンクキーを取得する
 
     Args:
@@ -116,9 +115,7 @@ def get_account_info(rest_gateway_url: str, address: str) -> Dict[str, Any]:
         except ValueError as e:
             raise RestGatewayError(f"JSON decode error: {e}")
 
-    raise RestGatewayError(
-        f"Failed to get account info after {DEFAULT_MAX_RETRIES} attempts"
-    )
+    raise RestGatewayError(f"Failed to get account info after {DEFAULT_MAX_RETRIES} attempts")
 
 
 def get_network_time(rest_gateway_url: str) -> int:
@@ -148,9 +145,7 @@ def get_network_time(rest_gateway_url: str) -> int:
 
     except requests.exceptions.HTTPError as e:
         if e.response is not None and e.response.status_code == 404:
-            raise RestGatewayError(
-                "REST gateway URL is not valid or the service is down."
-            )
+            raise RestGatewayError("REST gateway URL is not valid or the service is down.")
         elif e.response is not None and e.response.status_code == 503:
             raise RestGatewayError("Service unavailable. Please try again later.")
         else:

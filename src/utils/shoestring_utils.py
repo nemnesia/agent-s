@@ -1,6 +1,6 @@
 import configparser
 import logging
-from typing import Optional, Dict
+from typing import Dict, Optional
 
 from cryptography import x509
 from cryptography.hazmat.backends import default_backend
@@ -84,9 +84,7 @@ def get_key_pair(key_pem_path: str) -> Optional[KeyPair]:
         return KeyPair(private_key)
 
     except (OSError, ValueError, TypeError) as e:
-        logger.error(
-            f"PEMファイルから秘密鍵の読み込みに失敗しました ({key_pem_path}): {e}"
-        )
+        logger.error(f"PEMファイルから秘密鍵の読み込みに失敗しました ({key_pem_path}): {e}")
         return None
     except Exception as e:
         logger.error(f"予期しないエラーが発生しました ({key_pem_path}): {e}")

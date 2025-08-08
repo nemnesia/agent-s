@@ -3,14 +3,14 @@ Symbol blockchain transaction utility functions
 """
 
 import logging
-from typing import List, Optional, Union, Any
 from dataclasses import dataclass
+from typing import Any, List, Optional
 
-from symbolchain.NetworkTimestamp import NetworkTimestamp
-from symbolchain.facade.SymbolFacade import SymbolFacade
 from symbolchain.CryptoTypes import PublicKey
+from symbolchain.facade.SymbolFacade import SymbolFacade
+from symbolchain.NetworkTimestamp import NetworkTimestamp
 
-from .rest_gateway_utils import get_network_time, RestGatewayError
+from .rest_gateway_utils import RestGatewayError, get_network_time
 
 # ログ設定
 logger = logging.getLogger(__name__)
@@ -194,9 +194,7 @@ def create_aggregate_transaction(
 
         # アグリゲートタイプの決定
         aggregate_type = (
-            "complete"
-            if min_cosignatures_count < MIN_COSIGNATURES_FOR_BONDED
-            else "bonded"
+            "complete" if min_cosignatures_count < MIN_COSIGNATURES_FOR_BONDED else "bonded"
         )
 
         transaction_type = (

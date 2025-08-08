@@ -1,7 +1,7 @@
 import argparse
 import configparser
 import logging
-from typing import Optional, List, Literal
+from typing import List, Optional
 
 from cryptography import x509
 from cryptography.hazmat.backends import default_backend
@@ -284,9 +284,7 @@ def show_account_info(
                 return
 
             # 秘密鍵と証明書の公開鍵の整合性をチェック
-            if not _validate_key_consistency(
-                private_public_key, cert_public_key, label
-            ):
+            if not _validate_key_consistency(private_public_key, cert_public_key, label):
                 print(f"{label}証明書の秘密鍵と公開鍵が一致しません。")
                 return
 

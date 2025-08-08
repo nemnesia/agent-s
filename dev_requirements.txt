@@ -2,3 +2,9 @@
 pytest==8.4.1
 pytest-cov==5.0.0
 pytest-mock==3.14.1
+
+# Linting and formatting tools
+flake8
+black
+isort
+pylint
