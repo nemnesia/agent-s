@@ -267,8 +267,17 @@ def link_node_keys(args):
             min_cosignatures_count,
         )
 
+
         logger.info(f"アグリゲートトランザクションを生成しました: {aggregate_tx}")
         print(f"シリアライズ化Tx: {aggregate_tx.serialize().hex()}")
+
+        # トランザクションをバイナリでファイルに出力
+        try:
+            with open("agent-s_linking_transaction.dat", "wb") as f:
+                f.write(aggregate_tx.serialize())
+            logger.info("トランザクションを agent-s_linking_transaction.dat にバイナリ出力しました。")
+        except Exception as e:
+            logger.error(f"トランザクションのファイル出力に失敗しました: {e}")
 
     except RestGatewayError as e:
         logger.error(f"REST Gateway エラー: {e}")
